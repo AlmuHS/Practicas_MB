@@ -1,7 +1,10 @@
 import re
+import parse_xml as parser
+
 
 def read_file(name):
     items = dict();
+    output_file = str(name) + ".xml"
 
     with open(name, 'r') as LISA:
         id = LISA.readline().split(" ")[1].rstrip()
@@ -29,9 +32,10 @@ def read_file(name):
         items["text"] = text
         #print("text: " + text)
 
-    return items
+        parser.write_xml(items, output_file)
 
 #items = read_file("../lisa/LISA5.627") 
 #print(items["text"])
+read_file("../lisa/LISA5.627") 
 
 
