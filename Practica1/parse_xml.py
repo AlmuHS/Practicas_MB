@@ -3,7 +3,6 @@ import xml.etree.ElementTree as etree
 def write_xml(items, output_file):
 	file = open(output_file, 'a+')
 
-
 	root = etree.Element("add")
 	doc = etree.Element("doc")
 	root.append(doc)
@@ -22,6 +21,7 @@ def write_xml(items, output_file):
 	doc.append(field_text)
 
 	string = etree.tostring(root).decode("utf-8")
+	string = string.replace("field fieldname", "fieldname")
 
 	#string = etree.dump(root)
 
