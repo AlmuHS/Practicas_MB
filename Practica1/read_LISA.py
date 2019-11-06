@@ -1,9 +1,12 @@
 import re
 
 def read_file(name):
+    items = dict();
+
     with open(name, 'r') as LISA:
-        number = LISA.readline().split(" ")[1].rstrip()
-        print("number: " + number)
+        id = LISA.readline().split(" ")[1].rstrip()
+        items["id"] = id
+        #print("number: " + number)
 
         title = ""
         line = "."
@@ -11,7 +14,8 @@ def read_file(name):
             line = LISA.readline().replace("\n", " ")
             title += line
 
-        print("title: " + title)
+        items["title"] = title
+        #print("title: " + title)
 
         line = LISA.readline()
         text = ""
@@ -22,9 +26,12 @@ def read_file(name):
             if(re.match("^\*+$", line) == None):
                 text += line.replace("\n", " ") 
 
-        print("text: " + text)
+        items["text"] = text
+        #print("text: " + text)
 
+    return items
 
+#items = read_file("../lisa/LISA5.627") 
+#print(items["text"])
 
-read_file("../lisa/LISA5.627") 
 
