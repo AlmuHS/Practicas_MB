@@ -10,13 +10,15 @@ def read_file(name):
     
         while True:
  
-            id = ""
-            id = LISA.readline()
+            line = ""
+            line = LISA.readline()
 
-            if(id == ''):
+            if(line == ''):
                 break
 
-            id = id.split(" ")[1].rstrip()
+            line = line.split(" ")           
+
+            id = line[len(line)-1].rstrip()
 
             items["id"] = id
             print("id: " + id)
@@ -48,6 +50,6 @@ def read_file(name):
 
 #items = read_file("../lisa/LISA5.627") 
 #print(items["text"])
-read_file("../lisa/LISA2.001") 
+read_file("../lisa/LISA0.001") 
 
 
