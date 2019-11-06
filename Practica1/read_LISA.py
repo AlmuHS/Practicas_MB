@@ -7,35 +7,47 @@ def read_file(name):
     output_file = str(name) + ".xml"
 
     with open(name, 'r') as LISA:
-        id = LISA.readline().split(" ")[1].rstrip()
-        items["id"] = id
-        #print("number: " + number)
+    
+        while True:
+ 
+            id = ""
+            id = LISA.readline()
 
-        title = ""
-        line = "."
-        while(line[0] != " "):
-            line = LISA.readline().replace("\n", " ")
-            title += line
+            if(id == ''):
+                break
 
-        items["title"] = title
-        #print("title: " + title)
+            id = id.split(" ")[1].rstrip()
 
-        line = LISA.readline()
-        text = ""
+            items["id"] = id
+            print("id: " + id)
 
-        while(re.match("^\*+$", line) == None):
+            title = ""
+            line = "."
+            while(line[0] != " "):
+                line = LISA.readline().replace("\n", " ")
+                title += line
+
+            items["title"] = title
+            print("title: " + title)
+
             line = LISA.readline()
+            text = ""
 
-            if(re.match("^\*+$", line) == None):
-                text += line.replace("\n", " ") 
+            while(re.match("^\*+$", line) == None):
+                line = LISA.readline()
 
-        items["text"] = text
-        #print("text: " + text)
+                if(re.match("^\*+$", line) == None):
+                    text += line.replace("\n", " ") 
 
-        parser.write_xml(items, output_file)
+            items["text"] = text
+            print("text: " + text)
+
+            parser.write_xml(items, output_file)
+
+
 
 #items = read_file("../lisa/LISA5.627") 
 #print(items["text"])
-read_file("../lisa/LISA5.627") 
+read_file("../lisa/LISA2.001") 
 
 
