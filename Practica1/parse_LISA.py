@@ -8,24 +8,41 @@ The function get the id, title and text of each document, and send them to write
 '''
 
 def parse_file(filename):
+
+    #create dictionary to store the items of each document
     items = dict();
+
+    #the output file will have the same name than input file, adding .xml extension
     output_file = str(filename) + ".xml"
 
     #open input file
     with open(filename, 'r') as LISA:
     
+        '''
+        This loop read entire file until find EOL
+        Each iteration parses the content of a document in the file
+        After parse each document, their items will be sent to write_xml function to add this to output_file in XML format
+        The dictionary and variables will be recycled and overwritten in each iteration of the loop
+        '''
+
         #read file line to line
         while True:
  
             line = LISA.readline()
 
-            #if line is EOF, finish the loop 
+            '''
+            Python doesn't offers any function to find the EOF in a file.
+            When readline() reach EOF, It returns a empty string.
+            So, we use this strategy to break the infinite loop in EOF
+            '''
+
+            #if line is EOF, finish the loop
             if(not line.strip()):
                 break
 
             #get id (latest word in the line)
             line = line.split(" ")           
-            id = line[len(line)-1].rstrip()
+            id = line[-1].rstrip()
 
             #store id in dictionary
             items["id"] = id
@@ -56,7 +73,7 @@ def parse_file(filename):
 
             #store title in dictionary, replacing EOL with spaces
             items["title"] = title.replace("\n", " ")
-            print("title: " + title)
+            print("title: " + items["title"])
 
 
             '''
@@ -81,7 +98,7 @@ def parse_file(filename):
                         
             #stores text in dictionary
             items["text"] = text.replace('\n', " ").replace("\r", " ")
-            print("text: " + text)
+            print("text: " + items["text"])
 
 
             #call to write_xml function, which fills all items in a xml structure, and write It to output_file
