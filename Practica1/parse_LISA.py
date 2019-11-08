@@ -4,15 +4,15 @@ import write_xml as writer
 
 '''
 This function parses the content of a LISA file, getting the items of each document stored in It
-The function get the id, title and text of each document, and pass them to write_xml function to generate XML file
+The function get the id, title and text of each document, and send them to write_xml function to generate XML file
 '''
 
-def read_file(name):
+def parse_file(filename):
     items = dict();
-    output_file = str(name) + ".xml"
+    output_file = str(filename) + ".xml"
 
     #open input file
-    with open(name, 'r') as LISA:
+    with open(filename, 'r') as LISA:
     
         #read file line to line
         while True:
@@ -91,6 +91,6 @@ def read_file(name):
 
 #items = read_file("../lisa/LISA5.627") 
 #print(items["text"])
-read_file("../lisa/LISA3.001") 
+parse_file("../lisa/LISA3.001") 
 
 
