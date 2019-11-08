@@ -13,7 +13,7 @@ def read_file(name):
             line = ""
             line = LISA.readline()
 
-            if(line == ''):
+            if(not line.strip()):
                 break
 
             line = line.split(" ")           
@@ -25,11 +25,12 @@ def read_file(name):
 
             title = ""
             line = "."
-            while(line[0] != " "):
-                line = LISA.readline().replace("\n", " ")
+            
+            while(line.strip()):
+                line = LISA.readline()
                 title += line
 
-            items["title"] = title
+            items["title"] = title.replace("\n", " ")
             print("title: " + title)
 
             line = LISA.readline()
@@ -39,9 +40,9 @@ def read_file(name):
                 line = LISA.readline()
 
                 if(re.match("^\*+$", line) == None):
-                    text += line.replace("\n", " ") 
+                    text += line 
 
-            items["text"] = text
+            items["text"] = text.replace("\n", " ")
             print("text: " + text)
 
             parser.write_xml(items, output_file)
