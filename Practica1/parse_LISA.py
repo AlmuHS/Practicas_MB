@@ -15,6 +15,10 @@ def parse_file(filename):
     #the output file will have the same name than input file, adding .xml extension
     output_file = str(filename) + ".xml"
 
+    #if output file exists, remove its content
+    output = open(output_file, "w")
+    output.close()
+
     #open input file
     with open(filename, 'r') as LISA:
     
