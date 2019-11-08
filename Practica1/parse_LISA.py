@@ -1,5 +1,5 @@
 import re
-import parse_xml as parser
+import write_xml as writer
 
 
 def read_file(name):
@@ -45,7 +45,7 @@ def read_file(name):
             items["text"] = text.replace("\n", " ")
             print("text: " + text)
 
-            parser.write_xml(items, output_file)
+            writer.write_xml(items, output_file)
 
 
 
