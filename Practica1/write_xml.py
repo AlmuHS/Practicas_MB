@@ -23,8 +23,5 @@ def write_xml(items, output_file):
 	string = etree.tostring(root).decode("utf-8")
 	string = string.replace("field fieldname", "fieldname")
 
-	#string = etree.dump(root)
-
-	#et = etree.ElementTree(root)
-	#et.write(output_file)
+	
 	file.write(str(string)+"\n")
