@@ -120,7 +120,9 @@ def execute_query(query):
     results = solr.search(query)
 
     for result in results:
-        print("The text is '{0}'.".format(result['text']) + "\n")
+        print("The id is '{0}'.".format(result['id']) + "\n" \
+            "The title is '{0}'.".format(result['title']) + "\n" \
+            "The text is '{0}'.".format(result['text']) + "\n")
 
 
 if(len(sys.argv) < 2):
