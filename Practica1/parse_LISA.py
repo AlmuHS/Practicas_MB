@@ -1,6 +1,7 @@
 import re
 import write_xml as writer
 import pysolr
+import sys
 
 '''
 This function parses the content of a LISA file, getting the items of each document stored in It
@@ -114,14 +115,27 @@ def parse_file(filename):
             writer.write_xml(items, output_file)
 
 
-#solr = pysolr.Solr('http://localhost:8983/solr/', auth=None)
-parse_file("../lisa/LISA3.001") 
+if(len(sys.argv) < 2):
+    print("It needs two parameters")
 
-solr = pysolr.Solr('http://localhost:8983/solr/gettingstarted', auth=None)
-results = solr.search('title:COMPUTER AND text:DATA')
-print(results)
+elif(str(sys.argv[1]) == 'add'):
+    path = str(sys.argv[2])
+    parse_file(path)
 
-for result in results:
-    print("The text is '{0}'.".format(result['text']) + "\n")
+elif(str(sys.argv[1]) == 'query'):
+    query = str(sys.argv[2])
+    solr = pysolr.Solr('http://localhost:8983/solr/gettingstarted', auth=None)
+    results = solr.search(query)
+
+    for result in results:
+        print("The text is '{0}'.".format(result['text']) + "\n")
+
+else:
+    print("The options available are:\n \
+        query \"string\" - Execute a query over the collection \n \
+        add path - Add a new LISA file from the path indicated by parameter \n")
+    
+
+
 
 
