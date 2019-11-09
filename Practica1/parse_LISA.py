@@ -115,6 +115,14 @@ def parse_file(filename):
             writer.write_xml(items, output_file)
 
 
+def execute_query(query):
+    solr = pysolr.Solr('http://localhost:8983/solr/gettingstarted', auth=None)
+    results = solr.search(query)
+
+    for result in results:
+        print("The text is '{0}'.".format(result['text']) + "\n")
+
+
 if(len(sys.argv) < 2):
     print("It needs two parameters")
 
@@ -124,11 +132,8 @@ elif(str(sys.argv[1]) == 'add'):
 
 elif(str(sys.argv[1]) == 'query'):
     query = str(sys.argv[2])
-    solr = pysolr.Solr('http://localhost:8983/solr/gettingstarted', auth=None)
-    results = solr.search(query)
-
-    for result in results:
-        print("The text is '{0}'.".format(result['text']) + "\n")
+    execute_query(query)
+    
 
 else:
     print("The options available are:\n \
