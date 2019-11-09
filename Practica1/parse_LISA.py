@@ -1,6 +1,6 @@
 import re
 import write_xml as writer
-
+import pysolr
 
 '''
 This function parses the content of a LISA file, getting the items of each document stored in It
@@ -18,6 +18,9 @@ def parse_file(filename):
     #if output file exists, remove its content
     output = open(output_file, "w")
     output.close()
+
+    #open solr
+    solr = pysolr.Solr('http://localhost:8983/solr/gettingstarted', auth=None)
 
     #open input file
     with open(filename, 'r') as LISA:
@@ -104,14 +107,21 @@ def parse_file(filename):
             items["text"] = text.replace('\n', " ").replace("\r", " ")
             print("text: " + items["text"])
 
+            #add docs to solr
+            solr.add([items])
 
             #call to write_xml function, which fills all items in a xml structure, and write It to output_file
             writer.write_xml(items, output_file)
 
 
-
-#items = read_file("../lisa/LISA5.627") 
-#print(items["text"])
+#solr = pysolr.Solr('http://localhost:8983/solr/', auth=None)
 parse_file("../lisa/LISA3.001") 
+
+solr = pysolr.Solr('http://localhost:8983/solr/gettingstarted', auth=None)
+results = solr.search('title:COMPUTER AND text:DATA')
+print(results)
+
+for result in results:
+    print("The text is '{0}'.".format(result['text']) + "\n")
 
 
