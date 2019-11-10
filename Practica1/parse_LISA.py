@@ -130,7 +130,11 @@ if(len(sys.argv) < 2):
 
 elif(str(sys.argv[1]) == 'add'):
     path = str(sys.argv[2])
-    parse_file(path)
+
+    if(not "LISA" in path):
+        print("Error: this is not a LISA file")
+    else:
+        parse_file(path)
 
 elif(str(sys.argv[1]) == 'query'):
     query = str(sys.argv[2])
