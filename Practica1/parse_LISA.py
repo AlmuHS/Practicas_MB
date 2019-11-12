@@ -117,7 +117,7 @@ def parse_file(filename):
 
 def execute_query(query):
     solr = pysolr.Solr('http://localhost:8983/solr/gettingstarted', auth=None)
-    results = solr.search(query)
+    results = solr.search(query, **{'score':'true'})
 
     for doc in results:
         print(doc)
@@ -138,13 +138,15 @@ def main_menu():
     elif(str(sys.argv[1]) == 'query'):
         query = str(sys.argv[2])
         execute_query(query)
-        
 
-    else:
+    elif(len(sys.argv) > 1):
         print("The options available are:\n \
             query \"string\" - Execute a query over the collection \n \
-            add path - Add a new LISA file from the path indicated by parameter \n")
-        
-main_menu()
+            add path - Add a new LISA file from the path indicated by parameter")
+
+
+
+if __name__ == '__main__':        
+    main_menu()
 
 
