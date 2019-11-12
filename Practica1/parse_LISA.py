@@ -106,7 +106,7 @@ def parse_file(filename):
                         
             #stores text in dictionary
             items["text"] = text.replace('\n', " ").replace("\r", " ")
-            print("text: " + items["text"])
+            print("text: " + items["text"].decode('utf-8'))
 
             #add docs to solr
             solr.add([items])
@@ -125,28 +125,29 @@ def execute_query(query):
             "The text is '{0}'.".format(result['text']) + "\n")
 
 
-if(len(sys.argv) < 2):
-    print("It needs two parameters")
+def main_menu():
 
-elif(str(sys.argv[1]) == 'add'):
-    path = str(sys.argv[2])
+    if(len(sys.argv) < 2):
+        print("It needs two parameters")
 
-    if(not "LISA" in path):
-        print("Error: this is not a LISA file")
+    elif(str(sys.argv[1]) == 'add'):
+        path = str(sys.argv[2])
+
+        if(not "LISA" in path):
+            print("Error: this is not a LISA file")
+        else:
+            parse_file(path)
+
+    elif(str(sys.argv[1]) == 'query'):
+        query = str(sys.argv[2])
+        execute_query(query)
+        
+
     else:
-        parse_file(path)
-
-elif(str(sys.argv[1]) == 'query'):
-    query = str(sys.argv[2])
-    execute_query(query)
-    
-
-else:
-    print("The options available are:\n \
-        query \"string\" - Execute a query over the collection \n \
-        add path - Add a new LISA file from the path indicated by parameter \n")
-    
-
-
+        print("The options available are:\n \
+            query \"string\" - Execute a query over the collection \n \
+            add path - Add a new LISA file from the path indicated by parameter \n")
+        
+main_menu()
 
 
