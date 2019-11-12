@@ -5,7 +5,7 @@ import sys
 
 '''
 This function parses the content of a LISA file, getting the items of each document stored in It
-The function get the id, title and text of each document, and send them to write_xml function to generate XML file
+The function get the id, title and text of each document, and upload them to solr server
 '''
 
 def parse_file(filename):
@@ -29,7 +29,7 @@ def parse_file(filename):
         '''
         This loop read entire file until find EOL
         Each iteration parses the content of a document in the file
-        After parse each document, their items will be sent to write_xml function to add this to output_file in XML format
+        After parse each document, their items will be added to solr to upload to the server
         The dictionary and variables will be recycled and overwritten in each iteration of the loop
         '''
 
@@ -106,24 +106,23 @@ def parse_file(filename):
                         
             #stores text in dictionary
             items["text"] = text.replace('\n', " ").replace("\r", " ")
-            print("text: " + items["text"].decode('utf-8'))
+            print("text: " + items["text"])
 
             #add docs to solr
             solr.add([items])
 
             #call to write_xml function, which fills all items in a xml structure, and write It to output_file
-            writer.write_xml(items, output_file)
+            #writer.write_xml(items, output_file)
 
 
 def execute_query(query):
     solr = pysolr.Solr('http://localhost:8983/solr/gettingstarted', auth=None)
     results = solr.search(query)
 
-    for result in results:
-        print("The id is '{0}'.".format(result['id']) + "\n" \
-            "The title is '{0}'.".format(result['title']) + "\n" \
-            "The text is '{0}'.".format(result['text']) + "\n")
+    print(dir(results))
 
+    for doc in results:
+        print(doc)
 
 def main_menu():
 
