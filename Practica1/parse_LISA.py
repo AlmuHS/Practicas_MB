@@ -117,7 +117,7 @@ def parse_file(filename):
 
 def execute_query(query):
     solr = pysolr.Solr('http://localhost:8983/solr/gettingstarted', auth=None)
-    results = solr.search(query, **{'fl':'*,score, dv_field_name', 'rows':20})
+    results = solr.search(query, **{'fl':'*,score', 'rows':200})
 
     for doc in results:
         print(doc)
