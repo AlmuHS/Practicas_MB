@@ -27,7 +27,7 @@ def parse_file(filename):
     with open(filename, 'r') as LISA:
     
         '''
-        This loop read entire file until find EOF
+        This loop read entire file until find EOL
         Each iteration parses the content of a document in the file
         After parse each document, their items will be added to solr to upload to the server
         The dictionary and variables will be recycled and overwritten in each iteration of the loop
@@ -118,8 +118,6 @@ def parse_file(filename):
 def execute_query(query):
     solr = pysolr.Solr('http://localhost:8983/solr/gettingstarted', auth=None)
     results = solr.search(query)
-
-    print(dir(results))
 
     for doc in results:
         print(doc)
