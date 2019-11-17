@@ -2,6 +2,7 @@ import re
 import write_xml as writer
 import pysolr
 import sys
+import string
 
 '''
 This function parses the content of a LISA file, getting the items of each document stored in It
@@ -129,11 +130,9 @@ def query_batch(filename):
                  "INTERESTED", "FOR INSTANCE", "INSTANCE", "RECEIVE INFORMATION", "ALSO",
                  "WOULD", "BE", "RECEIVE", "GRATEFUL", "BE PLEASED TO", "PLEASED", \
                   "INFORMATION ABOUT", "MY DISSERTATION IS", "GIVING" "ANY", "I AM DOING" "CONCERNS", "SUCH AS", \
-                    "TO RECEIVE", "ALMOST", "ANYTHING", "TO DO WITH", "TO DO", "PROVISION", "E.G.", "CONCERNED", "ETC"]
+                    "TO RECEIVE", "ALMOST", "ANYTHING", "TO DO WITH", "TO DO", "PROVISION", "E.G.", "CONCERNED", \
+                     "ETC", "THE", "OF", "AND", "OR"]
                     
-
-    key_words = ["AND", "OR"]
-    #key_words = ["WHO", "WHY", "IN", "AND", "THE", "OR", "OF"]
 
     with open(filename, 'r') as lisa_query:
         
@@ -158,22 +157,14 @@ def query_batch(filename):
 
             text += line.replace(". #", "")
             text = text.replace("\n", " ")
-            text = text.replace(".", "")
-            text = text.replace(",", "")
-            text = text.replace(":", "")
+           
+            text = text.translate(str.maketrans('', '', string.punctuation))
 
             for word in null_words:
                 text = text.replace(word + " ", "")
-
-            query = "text:"
-            for word in text:
-                if(word not in key_words):
-                    query += word
-                else:
-                    query += word + " text: "
-                   
-            print(query)
-            execute_query(query)
+            
+            print(text)
+            execute_query("text: " + text)
                                     	
 
 def main_menu():
