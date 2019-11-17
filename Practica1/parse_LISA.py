@@ -121,6 +121,60 @@ def execute_query(query):
 
     for doc in results:
         print(doc)
+        print("\n")
+
+def query_batch(filename):
+
+    null_words = ["I", "AM", "INTERESTED IN","ALSO INTERESTED",  "MORE INTERESTED", \
+                 "INTERESTED", "FOR INSTANCE", "INSTANCE", "RECEIVE INFORMATION", "ALSO",
+                 "WOULD", "BE", "RECEIVE", "GRATEFUL", "BE PLEASED TO", "PLEASED", \
+                  "INFORMATION ABOUT", "MY DISSERTATION IS", "GIVING" "ANY", "I AM DOING" "CONCERNS", "SUCH AS", \
+                    "TO RECEIVE", "ALMOST", "ANYTHING", "TO DO WITH", "TO DO", "PROVISION", "E.G.", "CONCERNED", "ETC"]
+                    
+
+    key_words = ["AND", "OR"]
+    #key_words = ["WHO", "WHY", "IN", "AND", "THE", "OR", "OF"]
+
+    with open(filename, 'r') as lisa_query:
+        
+        while True:
+
+            line = lisa_query.readline();
+    
+            #if line is EOF, finish the loop
+            if(not line.strip()):
+                break     
+        
+            id = line.split(" ")[0].rstrip();
+
+            print(id)
+
+            text = ""
+            line = lisa_query.readline()
+            
+            while(re.match("^.*\.*#$", line) == None):
+                text += line
+                line = lisa_query.readline()
+
+            text += line.replace(". #", "")
+            text = text.replace("\n", " ")
+            text = text.replace(".", "")
+            text = text.replace(",", "")
+            text = text.replace(":", "")
+
+            for word in null_words:
+                text = text.replace(word + " ", "")
+
+            query = "text:"
+            for word in text:
+                if(word not in key_words):
+                    query += word
+                else:
+                    query += word + " text: "
+                   
+            print(query)
+            execute_query(query)
+                                    	
 
 def main_menu():
 
@@ -147,6 +201,6 @@ def main_menu():
 
 
 if __name__ == '__main__':        
-    main_menu()
-
+    #main_menu()
+    query_batch("../lisa/LISA.QUE")
 
