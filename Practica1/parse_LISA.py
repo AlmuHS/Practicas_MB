@@ -123,7 +123,7 @@ def parse_file(filename):
 
 def execute_query(query):
     solr = solr_connection("gettingstarted")
-    results = solr.search(query, **{'fl':'*,score', 'rows':200})
+    results = solr.search(query, **{'fl':'*,score', 'rows':50, 'sort': 'score desc'})
 
     for doc in results:
         print(doc)
@@ -177,9 +177,11 @@ def query_batch(filename, output_file):
             results = execute_query("text: " + text)
 
             doc_counter += 1
-
+            ranking = 0
+            
             for document in results:
-                output.write(str(doc_counter) + "\t" + "Q0\t" + str(document["id"]) + "\t" + str(document["score"]) + "\n")
+                output.write(str(doc_counter) + "\t" + "Q0\t" + str(document["id"]) + "\t" + str(ranking) + "\t"+ str(document["score"]) + "\n")
+                ranking += 1
                                     	
 
 def main_menu():
