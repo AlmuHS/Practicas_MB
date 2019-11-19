@@ -9,6 +9,11 @@ This function parses the content of a LISA file, getting the items of each docum
 The function get the id, title and text of each document, and upload them to solr server
 '''
 
+def solr_connection(collection):
+    solr = pysolr.Solr('http://localhost:8983/solr/' + collection, auth=None)
+    return solr
+
+
 def parse_file(filename):
 
     #create dictionary to store the items of each document
@@ -22,7 +27,7 @@ def parse_file(filename):
     output.close()
 
     #open solr
-    solr = pysolr.Solr('http://localhost:8983/solr/gettingstarted', auth=None)
+    solr = solr_connection("gettingstarted")
 
     #open input file
     with open(filename, 'r') as LISA:
@@ -109,7 +114,7 @@ def parse_file(filename):
             items["text"] = text.replace('\n', " ").replace("\r", " ")
             print("text: " + items["text"])
 
-            #add docs to solr
+            #upload docs to solr
             solr.add([items])
 
             #call to write_xml function, which fills all items in a xml structure, and write It to output_file
@@ -117,16 +122,19 @@ def parse_file(filename):
 
 
 def execute_query(query):
-    solr = pysolr.Solr('http://localhost:8983/solr/gettingstarted', auth=None)
+    solr = solr_connection("gettingstarted")
     results = solr.search(query, **{'fl':'*,score', 'rows':200})
 
     for doc in results:
         print(doc)
         print("\n")
 
-def query_batch(filename):
+    return results
 
-    null_words = ["I", "AM", "INTERESTED IN","ALSO INTERESTED",  "MORE INTERESTED", \
+
+def query_batch(filename, output_file):
+
+    stop_words = ["I", "AM", "INTERESTED IN","ALSO INTERESTED",  "MORE INTERESTED", \
                  "INTERESTED", "FOR INSTANCE", "INSTANCE", "RECEIVE INFORMATION", "ALSO",
                  "WOULD", "BE", "RECEIVE", "GRATEFUL", "BE PLEASED TO", "PLEASED", \
                   "INFORMATION ABOUT", "MY DISSERTATION IS", "GIVING" "ANY", "I AM DOING" "CONCERNS", "SUCH AS", \
@@ -134,7 +142,7 @@ def query_batch(filename):
                      "ETC", "THE", "OF", "AND", "OR"]
                     
 
-    with open(filename, 'r') as lisa_query:
+    with open(filename, 'r') as lisa_query, open(output_file, 'w') as output:
         
         while True:
 
@@ -160,11 +168,14 @@ def query_batch(filename):
            
             text = text.translate(str.maketrans('', '', string.punctuation))
 
-            for word in null_words:
+            for word in stop_words:
                 text = text.replace(word + " ", "")
             
             print(text)
-            execute_query("text: " + text)
+            results = execute_query("text: " + text)
+
+            for document in results:
+                output.write(document)
                                     	
 
 def main_menu():
@@ -184,6 +195,10 @@ def main_menu():
         query = str(sys.argv[2])
         execute_query(query)
 
+    elif(str(sys.argv[1]) == 'query_batch'):
+        path = str(sys.argv[2])
+        query_batch(path)
+
     elif(len(sys.argv) > 1):
         print("The options available are:\n \
             query \"string\" - Execute a query over the collection \n \
@@ -192,6 +207,5 @@ def main_menu():
 
 
 if __name__ == '__main__':        
-    #main_menu()
-    query_batch("../lisa/LISA.QUE")
+    main_menu()
 
