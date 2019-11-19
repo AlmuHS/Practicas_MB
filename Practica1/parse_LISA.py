@@ -134,10 +134,10 @@ def execute_query(query):
 
 def query_batch(filename, output_file):
 
-    stop_words = ["I", "AM", "INTERESTED IN","ALSO INTERESTED",  "MORE INTERESTED", \
-                 "INTERESTED", "FOR INSTANCE", "INSTANCE", "RECEIVE INFORMATION", "ALSO",
+    stop_words = ["I AM DOING","I", "AM", "INTERESTED IN","ALSO INTERESTED",  "MORE INTERESTED", \
+                 "INTERESTED", "FOR INSTANCE", "INSTANCE", "RECEIVE INFORMATION", "ALSO", \
                  "WOULD", "BE", "RECEIVE", "GRATEFUL", "BE PLEASED TO", "PLEASED", \
-                  "INFORMATION ABOUT", "MY DISSERTATION IS", "GIVING" "ANY", "I AM DOING" "CONCERNS", "SUCH AS", \
+                  "INFORMATION ABOUT", "MY DISSERTATION IS", "GIVING" "ANY", "CONCERNS", "SUCH AS", \
                     "TO RECEIVE", "ALMOST", "ANYTHING", "TO DO WITH", "TO DO", "PROVISION", "E.G.", "CONCERNED", \
                      "ETC", "THE", "OF", "AND", "OR"]
                     
