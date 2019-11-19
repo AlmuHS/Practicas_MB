@@ -143,6 +143,8 @@ def query_batch(filename, output_file):
                     
 
     with open(filename, 'r') as lisa_query, open(output_file, 'w') as output:
+
+        doc_counter = 0
         
         while True:
 
@@ -174,8 +176,10 @@ def query_batch(filename, output_file):
             print(text)
             results = execute_query("text: " + text)
 
+            doc_counter += 1
+
             for document in results:
-                output.write(document)
+                output.write(str(doc_counter) + "\t" + "Q0\t" + str(document["id"]) + "\t" + str(document["score"]) + "\n")
                                     	
 
 def main_menu():
@@ -196,8 +200,9 @@ def main_menu():
         execute_query(query)
 
     elif(str(sys.argv[1]) == 'query_batch'):
-        path = str(sys.argv[2])
-        query_batch(path)
+        input_path = str(sys.argv[2])
+        output_path = str(sys.argv[3])
+        query_batch(input_path, output_path)
 
     elif(len(sys.argv) > 1):
         print("The options available are:\n \
