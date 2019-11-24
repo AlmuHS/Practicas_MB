@@ -5,14 +5,18 @@ import sys
 import string
 
 '''
-This function parses the content of a LISA file, getting the items of each document stored in It
-The function get the id, title and text of each document, and upload them to solr server
+This function set the connection to a solr local server
 '''
 
 def solr_connection(collection):
     solr = pysolr.Solr('http://localhost:8983/solr/' + collection, auth=None)
     return solr
 
+
+'''
+This function parses the content of a LISA file, getting the items of each document stored in It
+The function get the id, title and text of each document, and upload them to solr server
+'''
 
 def parse_file(filename):
 
@@ -121,19 +125,49 @@ def parse_file(filename):
             #writer.write_xml(items, output_file)
 
 
+'''
+This function execute a query, defined as a string using solr syntax 
+(http://www.solrtutorial.com/solr-query-syntax.html), over a solr local server.
+The function returns the results of this query, as a dictionary
+'''
+
 def execute_query(query):
+
+    #set connection to solr local server
     solr = solr_connection("gettingstarted")
+
+    '''
+    This line execute the query, defined as a string, over the solr server
+    The results includes score field, and will be sortered from highest score to lowest score
+
+    https://lucene.apache.org/solr/guide/6_6/common-query-parameters.html
+
+    This call return the results in JSON, as a dictionary
+    '''
+
+    #execute query over the server, adding score field to the results, and sort them using score 
     results = solr.search(query, **{'fl':'*,score', 'rows':50, 'sort': 'score desc'})
 
+    #print results, separated by a blank line
     for doc in results:
         print(doc)
         print("\n")
 
+    #return results in a dictionary
     return results
 
-
+'''
+This function parses the content of a query files, where each query is written in natural language.
+The function filter the most important words of each query, and send the query to solr local server
+The results of each query are written to a file using TREC format, as trec_top_file
+'''
 def query_batch(filename, output_file):
 
+    '''
+    This list includes the stop words which will be considered irrelevant to the query
+    The list not only includes single words, and includes some complex expressions too
+    This stop words will be removed of the query before send It to solr
+    '''
     stop_words = ["I AM DOING","I", "AM", "INTERESTED IN","ALSO INTERESTED",  "MORE INTERESTED", \
                  "INTERESTED", "FOR INSTANCE", "INSTANCE", "RECEIVE INFORMATION", "ALSO", \
                  "WOULD", "BE", "RECEIVE", "GRATEFUL", "BE PLEASED TO", "PLEASED", \
@@ -142,48 +176,105 @@ def query_batch(filename, output_file):
                      "ETC", "THE", "OF", "AND", "OR"]
                     
 
+    #open query input file, and trec output file
     with open(filename, 'r') as lisa_query, open(output_file, 'w') as output:
 
+        #counter of documents which will be sent as query 
         doc_counter = 0
         
+        '''
+        This loop parses the query file, filtering the most important keywords of each query document,
+        and sending then to solr.
+
+        Each iteration parses a query document, send the filtered query to solr, and write the results to a file,
+        in trec_top_file format
+        '''
         while True:
 
             line = lisa_query.readline();
     
+            '''
+            Python doesn't offers any function to find the EOF in a file.
+            When readline() reach EOF, It returns a empty string.
+            So, we use this strategy to break the infinite loop in EOF
+            '''
+
             #if line is EOF, finish the loop
             if(not line.strip()):
                 break     
         
+
+            '''
+            This line get the ID of each query document            
+            The ID field is a only word, in the first line of each document.
+            We get this using a split
+            '''
+            #Get id and remove EOL 
             id = line.split(" ")[0].rstrip();
 
             print(id)
 
-            text = ""
-            line = lisa_query.readline()
+            '''
+            This block get the content of the query. 
+            Each query is in a couple of lines, followed by a # character.
+            To get the query, we read line to line until find a line which finish with #,
+             and concatenate each line in a only string, removing the EOL.
+            Finally, we add this latest line, removing # character from the line
+            '''
+
+            #initialize query variable as empty string
+            query = ""
+
+            #read first line (to start the check)
+            query = lisa_query.readline()
             
+            #read file line to line until find # character
             while(re.match("^.*\.*#$", line) == None):
-                text += line
+                #add line to query string
+                query += line
+
+                #read next line
                 line = lisa_query.readline()
 
-            text += line.replace(". #", "")
-            text = text.replace("\n", " ")
+            #add last line to the query string, removing # character
+            query += line.replace(". #", "")
+
+            #remove all EOL of the query
+            query = query.replace("\n", " ")
            
-            text = text.translate(str.maketrans('', '', string.punctuation))
+            '''
+            Once get the query in natural language, we filter the query,
+             removing stop words and some useless characters
+            '''
 
+            #remove punctuation marks of the query
+            query = query.translate(str.maketrans('', '', string.punctuation))
+
+            #remove stop words of the query
             for word in stop_words:
-                text = text.replace(word + " ", "")
+                query = query.replace(word + " ", "")
             
-            print(text)
-            results = execute_query("text: " + text)
+            #print filtered query
+            print(query)
 
+            '''
+            Send filtered query to solr, and write results to a file
+            '''
+            #send query to solr
+            results = execute_query("text: " + query)
+
+            #Increment the number of query sent
             doc_counter += 1
-            ranking = 0
             
+            #initialize ranking variable, to sort the results using its score
+            ranking = 1
+            
+            #write each result to output_file, using trec format
             for document in results:
-                output.write(str(doc_counter) + "\t" + "Q0\t" + str(document["id"]) + "\t" + str(ranking) + "\t"+ str(document["score"]) + "\n")
+                output.write(f'{doc_counter} Q0 {document["id"]} {ranking} {document["score"]} \n')                
                 ranking += 1
-                                    	
 
+                                    	
 def main_menu():
 
     if(len(sys.argv) < 2):
@@ -209,7 +300,8 @@ def main_menu():
     elif(len(sys.argv) > 1):
         print("The options available are:\n \
             query \"string\" - Execute a query over the collection \n \
-            add path - Add a new LISA file from the path indicated by parameter")
+            add path - Add a new LISA file from the path indicated by parameter \n \
+            query_batch - Execute a set of query from input file indicated by input_path, storing the results in output_path\n")
 
 
 
