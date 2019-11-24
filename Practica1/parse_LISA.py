@@ -18,7 +18,7 @@ This function parses the content of a LISA file, getting the items of each docum
 The function get the id, title and text of each document, and upload them to solr server
 '''
 
-def parse_file(filename):
+def upload_lisa(filename):
 
     #create dictionary to store the items of each document
     items = dict();
@@ -286,7 +286,7 @@ def main_menu():
         if(not "LISA" in path):
             print("Error: this is not a LISA file")
         else:
-            parse_file(path)
+            upload_lisa(path)
 
     elif(str(sys.argv[1]) == 'query'):
         query = str(sys.argv[2])
@@ -300,8 +300,8 @@ def main_menu():
     elif(len(sys.argv) > 1):
         print("The options available are:\n \
             query \"string\" - Execute a query over the collection \n \
-            add path - Add a new LISA file from the path indicated by parameter \n \
-            query_batch - Execute a set of query from input file indicated by input_path, storing the results in output_path\n")
+            add [path] - Add a new LISA file from the path indicated by parameter \n \
+            query_batch [input_path] [output_path] - Execute a set of query from input file indicated by input_path, storing the results in output_path\n")
 
 
 
