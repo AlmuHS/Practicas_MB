@@ -260,8 +260,8 @@ def query_batch(filename, output_file):
             '''
             Send filtered query to solr, and write results to a file
             '''
-            #send query to solr
-            results = execute_query("text: " + query)
+            #send query to solr, searching coincidences in title or text
+            results = execute_query("title: " + query + "OR text:" + query)
 
             #Increment the number of query sent
             doc_counter += 1
@@ -273,6 +273,33 @@ def query_batch(filename, output_file):
             for document in results:
                 output.write(f'{doc_counter} Q0 {document["id"]} {ranking} {document["score"]} \n')                
                 ranking += 1
+
+
+def gen_trec_rel(in_file, out_file):
+    
+    with open(in_file, 'r') as input, open(out_file, 'w') as output:
+        query_counter = 0
+
+        file_content = input.read()
+        items = file_content.split()
+        query_num = items[0]
+
+        print(items)
+        rel_docs = dict()
+        all_docs = []
+
+        for word in items:
+            if(word == str(query_counter+1)):
+                query_counter += 1
+                rel_docs[query_counter] = []
+
+                if(word not in all_docs):
+                    all_docs.append(word)
+            else:            
+                rel_docs[query_counter].append(word)
+
+        print(rel_docs)
+                        
 
                                     	
 def main_menu():
@@ -306,5 +333,5 @@ def main_menu():
 
 
 if __name__ == '__main__':        
-    main_menu()
-
+    #main_menu()
+    gen_trec_rel('../lisa/LISARJ.NUM', 'file')
