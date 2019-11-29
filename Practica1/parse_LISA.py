@@ -341,10 +341,10 @@ def main_menu():
         output_path = str(sys.argv[3])
         query_batch(input_path, output_path)
 
-    elif(str(sys.argv[1]) == "trec_eval"):
+    elif(str(sys.argv[1]) == 'trec_eval'):
         input_path = str(sys.argv[2])
         output_path = str(sys.argv[3])
-        query_batch(input_path, output_path)
+        gen_trec_rel(input_path, output_path)
 
     elif(len(sys.argv) > 1):
         print("The options available are:\n \
