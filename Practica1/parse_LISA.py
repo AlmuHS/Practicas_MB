@@ -318,6 +318,10 @@ def gen_trec_rel(in_file, out_file):
         print(all_docs)
                         
 
+def delete_all():
+    solr = solr_connection("gettingstarted")
+    solr.delete(q='*:*')
+
                                     	
 def main_menu():
 
@@ -346,15 +350,21 @@ def main_menu():
         output_path = str(sys.argv[3])
         gen_trec_rel(input_path, output_path)
 
+    elif(str(sys.argv[1]) == 'delete_all'):
+        delete_all()
+
     elif(len(sys.argv) > 1):
         print("The options available are:\n \
             query \"string\" - Execute a query over the collection \n \
             add [path] - Add a new LISA file from the path indicated by parameter \n \
             query_batch [input_path] [output_path] - Execute a set of query from input file indicated by input_path, storing the results in output_path\n \
-            trec_eval [input_path] [output_path] - Parses LISARJ.NUM file, stored the items in trec_rel_file format\n")
+            trec_eval [input_path] [output_path] - Parses LISARJ.NUM file, stored the items in trec_rel_file format\n \
+            delete_all - Delete all documents indexed by Solr\n \
+        ")
 
 
 
 if __name__ == '__main__':        
     main_menu()
-    #gen_trec_rel('../lisa/LISARJ.NUM', 'file')
+
+
