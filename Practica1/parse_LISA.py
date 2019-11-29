@@ -350,7 +350,8 @@ def main_menu():
         print("The options available are:\n \
             query \"string\" - Execute a query over the collection \n \
             add [path] - Add a new LISA file from the path indicated by parameter \n \
-            query_batch [input_path] [output_path] - Execute a set of query from input file indicated by input_path, storing the results in output_path\n")
+            query_batch [input_path] [output_path] - Execute a set of query from input file indicated by input_path, storing the results in output_path\n \
+            trec_eval [input_path] [output_path] - Parses LISARJ.NUM file, stored the items in trec_rel_file format\n")
 
 
 
