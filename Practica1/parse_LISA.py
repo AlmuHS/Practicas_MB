@@ -271,7 +271,7 @@ def query_batch(filename, output_file):
             
             #write each result to output_file, using trec format
             for document in results:
-                output.write(f'{doc_counter} Q0 {document["id"]} {ranking} {document["score"] almuhs} \n')                
+                output.write(f'{doc_counter} Q0 {document["id"]} {ranking} {document["score"]} almuhs \n')                
                 ranking += 1
 
 
