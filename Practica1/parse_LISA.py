@@ -341,6 +341,11 @@ def main_menu():
         output_path = str(sys.argv[3])
         query_batch(input_path, output_path)
 
+    elif(str(sys.argv[1]) == "trec_eval"):
+        input_path = str(sys.argv[2])
+        output_path = str(sys.argv[3])
+        query_batch(input_path, output_path)
+
     elif(len(sys.argv) > 1):
         print("The options available are:\n \
             query \"string\" - Execute a query over the collection \n \
@@ -350,5 +355,5 @@ def main_menu():
 
 
 if __name__ == '__main__':        
-    #main_menu()
-    gen_trec_rel('../lisa/LISARJ.NUM', 'file')
+    main_menu()
+    #gen_trec_rel('../lisa/LISARJ.NUM', 'file')
