@@ -146,7 +146,7 @@ def execute_query(query):
     '''
 
     #execute query over the server, adding score field to the results, and sort them using score 
-    results = solr.search(query, **{'fl':'*,score', 'rows':50, 'sort': 'score desc'})
+    results = solr.search(query, **{'fl':'*,score', 'rows':200, 'sort': 'score desc'})
 
     #print results, separated by a blank line
     for doc in results:
@@ -169,11 +169,11 @@ def query_batch(filename, output_file):
     This stop words will be removed of the query before send It to solr
     '''
     stop_words = ["I AM DOING","I", "AM", "INTERESTED IN","ALSO INTERESTED",  "MORE INTERESTED", \
-                 "INTERESTED", "FOR INSTANCE", "INSTANCE", "RECEIVE INFORMATION", "ALSO", \
-                 "WOULD", "BE", "RECEIVE", "GRATEFUL", "BE PLEASED TO", "PLEASED", \
-                  "INFORMATION ABOUT", "MY DISSERTATION IS", "GIVING" "ANY", "CONCERNS", "SUCH AS", \
+                 "INTERESTED", "FOR INSTANCE", "INSTANCE", "RECEIVE INFORMATION", \
+                 "WOULD", "RECEIVE", "GRATEFUL", "BE PLEASED TO", "PLEASED", \
+                  "INFORMATION ABOUT", "MY DISSERTATION IS", "GIVING", "ANY", "CONCERNS", "SUCH AS", \
                     "TO RECEIVE", "ALMOST", "ANYTHING", "TO DO WITH", "TO DO", "PROVISION", "E.G.", "CONCERNED", \
-                     "ETC", "THE", "OF", "AND", "OR"]
+                     "ETC", "AND", "OR"]
                     
 
     #open query input file, and trec output file
@@ -271,8 +271,9 @@ def query_batch(filename, output_file):
             
             #write each result to output_file, using trec format
             for document in results:
-                output.write(f'{doc_counter} Q0 {document["id"]} {ranking} {document["score"]} almuhs \n')                
-                ranking += 1
+                if document["score"] > 0.5:
+                    output.write(f'{doc_counter} Q0 {document["id"]} {ranking} {document["score"]} almuhs \n')                
+                    ranking += 1
 
 
 def gen_trec_rel(in_file, out_file):
