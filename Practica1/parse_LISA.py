@@ -301,6 +301,18 @@ def gen_trec_rel(in_file, out_file):
                     all_docs.append(word)
 
     
+        for ref in rel_docs:		
+
+            for doc in all_docs:
+                line = str(ref) + "\t" + "0" +"\t" + str(doc) + "\t"
+                if doc in rel_docs[ref]:
+                    line += "1"
+                else:
+                    line += "0"
+
+                output.write(line + "\n")                   
+
+
         print(rel_docs)
         print("\n\n")
         print(all_docs)
