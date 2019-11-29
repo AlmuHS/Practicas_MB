@@ -278,27 +278,32 @@ def query_batch(filename, output_file):
 def gen_trec_rel(in_file, out_file):
     
     with open(in_file, 'r') as input, open(out_file, 'w') as output:
-        query_counter = 0
+        query_counter = 1
 
-        file_content = input.read()
-        items = file_content.split()
-        query_num = items[0]
-
-        print(items)
         rel_docs = dict()
         all_docs = []
+        rel_docs[1] = []
 
-        for word in items:
-            if(word == str(query_counter+1)):
+        for line in input:
+            fields = line.split()
+            
+            if fields[0] == str(query_counter):
+                rel_docs[query_counter] += fields[1:len(fields)]
+            elif fields[0] == str(query_counter+1):
                 query_counter += 1
                 rel_docs[query_counter] = []
+                rel_docs[query_counter] += fields[1:len(fields)]
+            else:
+                rel_docs[query_counter] += fields[0:len(fields)]
 
-                if(word not in all_docs):
+            for word in fields:
+                if not word in all_docs:
                     all_docs.append(word)
-            else:            
-                rel_docs[query_counter].append(word)
 
+    
         print(rel_docs)
+        print("\n\n")
+        print(all_docs)
                         
 
                                     	
