@@ -169,7 +169,7 @@ def query_batch(filename, output_file):
     This stop words will be removed of the query before send It to solr
     '''
     stop_words = ["I AM DOING","I", "AM", "INTERESTED IN","ALSO INTERESTED",  "MORE INTERESTED", \
-                 "INTERESTED", "FOR INSTANCE", "INSTANCE", "RECEIVE INFORMATION", \
+                 "FOR INSTANCE", "INSTANCE", "RECEIVE INFORMATION", \
                  "WOULD", "RECEIVE", "GRATEFUL", "BE PLEASED TO", "PLEASED", \
                   "INFORMATION ABOUT", "MY DISSERTATION IS", "GIVING", "ANY", "CONCERNS", "SUCH AS", \
                     "TO RECEIVE", "ALMOST", "ANYTHING", "TO DO WITH", "TO DO", "PROVISION", "E.G.", "CONCERNED", \
@@ -303,16 +303,14 @@ def gen_trec_rel(in_file, out_file):
 
     
         for ref in rel_docs:		
-
             for doc in all_docs:
-                line = str(ref) + " " + "0" +" " + str(doc) + " "
+                line = f'{ref} 0 {doc} '
                 if doc in rel_docs[ref]:
                     line += "1"
                 else:
                     line += "0"
 
                 output.write(line + "\n")                   
-
 
         print(rel_docs)
         print("\n\n")
