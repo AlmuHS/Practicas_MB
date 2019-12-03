@@ -276,46 +276,104 @@ def query_batch(filename, output_file):
                     ranking += 1
 
 
+'''
+This function parses the content of LISARJ.NUM file, and generate a file in trec_rel_format.
+The function receives LISARJ.NUM as input, and generate trec_rel_file as output
+
+LISARJ.NUM has the next structure:
+QUERY_ID [LIST OF RELEVANTS DOCUMENTS]
+
+LISARJ.NUM shows the results sorted by query ID.
+
+trec_rel_file has different structure:
+query 0 document relevant[1/0]
+'''
+
 def gen_trec_rel(in_file, out_file):
     
+    #open files
     with open(in_file, 'r') as input, open(out_file, 'w') as output:
+
+        '''
+        To distinct a query from another, we will check the first word of each line,
+        using a query_counter to remember the current query ID.
+
+        If the first word has the value of query_counter+1, It means this line is refered to the next query
+        In other case, this line has more relevant documents of current query
+        '''
+        
+        #initialize query_counter to first query
         query_counter = 1
 
+        '''        
+        To store the relevant documents of each query, we will use a dictionary of lists, indexed by query ID
+        Each dictionary position has a list with the ID of the relevants documents of its query
+        '''
+
+        #create and initialize structures
         rel_docs = dict()
         all_docs = []
         rel_docs[1] = []
 
+
+        '''
+        Read file line to line.
+        If first word of the line correspond with query_counter, add the rest of fields to the list of its position
+        If this word is query_counter+1, initialize a new position in the dictionary, adding the fields to new position
+        In other case, add the fields to the list of the current query 
+        '''
         for line in input:
+    
+            #split the line in words
             fields = line.split()
             
+            #add documents of current query, excluding query ID
             if fields[0] == str(query_counter):
                 rel_docs[query_counter] += fields[1:len(fields)]
+
+            #add documents of next query, excluding query ID
             elif fields[0] == str(query_counter+1):
                 query_counter += 1
                 rel_docs[query_counter] = []
                 rel_docs[query_counter] += fields[1:len(fields)]
+
+            #add more documents of current query
             else:
                 rel_docs[query_counter] += fields[0:len(fields)]
 
+            '''
+            Add all quoted documents to a list, without repeat It
+            '''
             for word in fields:
                 if not word in all_docs:
                     all_docs.append(word)
 
-    
+        '''
+        Write results in trec_rel_file format
+        
+        For each query and each document, indicates if the document is relevant or not
+        '''    
         for ref in rel_docs:		
             for doc in all_docs:
+
+                #generate string
                 line = f'{ref} 0 {doc} '
                 if doc in rel_docs[ref]:
                     line += "1"
                 else:
                     line += "0"
 
+                #write new string to output_file
                 output.write(line + "\n")                   
 
+        #print lists
         print(rel_docs)
         print("\n\n")
         print(all_docs)
                         
+'''
+This function removes all documents stored in local solr server
+'''
 
 def delete_all():
     solr = solr_connection("gettingstarted")
