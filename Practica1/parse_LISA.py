@@ -146,7 +146,7 @@ def execute_query(query):
     '''
 
     #execute query over the server, adding score field to the results, and sort them using score 
-    results = solr.search(query, **{'fl':'*,score', 'rows':200, 'sort': 'score desc'})
+    results = solr.search(query, **{'fl':'*,score', 'rows':'10000', 'sort': 'score desc'})
 
     #print results, separated by a blank line
     for doc in results:
@@ -169,11 +169,11 @@ def query_batch(filename, output_file):
     This stop words will be removed of the query before send It to solr
     '''
     stop_words = ["I AM DOING","I", "AM", "INTERESTED IN","ALSO INTERESTED",  "MORE INTERESTED", \
-                 "FOR INSTANCE", "INSTANCE", "RECEIVE INFORMATION", \
+                 "FOR INSTANCE", "INSTANCE", "RECEIVE INFORMATION", "I AM CURRENTLY ENGAGED"\
                  "WOULD", "RECEIVE", "GRATEFUL", "BE PLEASED TO", "PLEASED", \
                   "INFORMATION ABOUT", "MY DISSERTATION IS", "GIVING", "ANY", "CONCERNS", "SUCH AS", \
                     "TO RECEIVE", "ALMOST", "ANYTHING", "TO DO WITH", "TO DO", "PROVISION", "E.G.", "CONCERNED", \
-                     "ETC", "AND", "OR"]
+                     "ETC", "AND", "OR", "THE", "BOTH", "ANY", "EITHER", "LIKE", "ITSELF", "I.E."]
                     
 
     #open query input file, and trec output file
@@ -271,9 +271,9 @@ def query_batch(filename, output_file):
             
             #write each result to output_file, using trec format
             for document in results:
-                if document["score"] > 0.5:
-                    output.write(f'{doc_counter} Q0 {document["id"]} {ranking} {document["score"]} almuhs \n')                
-                    ranking += 1
+                #if document["score"] > 1:
+                output.write(f'{doc_counter} Q0 {document["id"]} {ranking} {document["score"]} almuhs \n')                
+                ranking += 1
 
 
 '''
@@ -341,12 +341,11 @@ def gen_trec_rel(in_file, out_file):
             else:
                 rel_docs[query_counter] += fields[0:len(fields)]
 
-            '''
-            Add all quoted documents to a list, without repeat It
-            '''
-            for word in fields:
-                if not word in all_docs:
-                    all_docs.append(word)
+        '''
+        Get all documents stored in Solr and add them to a dictionary
+        '''
+        all_docs = execute_query("*:*")
+
 
         '''
         Write results in trec_rel_file format
@@ -357,8 +356,8 @@ def gen_trec_rel(in_file, out_file):
             for doc in all_docs:
 
                 #generate string
-                line = f'{ref} 0 {doc} '
-                if doc in rel_docs[ref]:
+                line = f'{ref} 0 {doc["id"]} '
+                if str(doc["id"]) in rel_docs[ref]:
                     line += "1"
                 else:
                     line += "0"
@@ -369,7 +368,8 @@ def gen_trec_rel(in_file, out_file):
         #print lists
         print(rel_docs)
         print("\n\n")
-        print(all_docs)
+        print(len(all_docs))
+
                         
 '''
 This function removes all documents stored in local solr server
