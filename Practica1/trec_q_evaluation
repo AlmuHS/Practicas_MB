@@ -323,7 +323,7 @@ P_200                 	2	0.0000
 P_500                 	2	0.0000
 P_1000                	2	0.0000
 num_ret               	20	267
-num_rel               	20	7
+num_rel               	20	6
 num_rel_ret           	20	0
 map                   	20	0.0000
 Rprec                 	20	0.0000
@@ -946,7 +946,7 @@ P_1000                	9	0.0000
 runid                 	all	almuhs
 num_q                 	all	35
 num_ret               	all	37892
-num_rel               	all	414
+num_rel               	all	413
 num_rel_ret           	all	126
 map                   	all	0.0089
 gm_map                	all	0.0003
