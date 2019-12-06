@@ -173,7 +173,7 @@ def query_batch(filename, output_file):
                  "WOULD", "RECEIVE", "GRATEFUL", "BE PLEASED TO", "PLEASED", "WOULD BE PLEASED", "THERE HAS"\
                   "INFORMATION ABOUT", "MY DISSERTATION IS", "GIVING", "ANY", "CONCERNS", "SUCH AS", \
                     "TO RECEIVE", "ALMOST", "ANYTHING", "TO DO WITH", "TO DO", "PROVISION", "E.G.", "CONCERNED", \
-                     "ETC", "AND", "OR", "THE", "BOTH", "ANY", "EITHER", "LIKE", "ITSELF", "I.E.", "OF", "FOR", "FROM"]
+                     "ETC", "AND", "OR", "THE", "BOTH", "ANY", "EITHER", "LIKE", "ITSELF", "I.E.", "OF", "FOR", "FROM", "IN"]
                     
 
     #open query input file, and trec output file
@@ -344,20 +344,29 @@ def gen_trec_rel(in_file, out_file):
         '''
         Get all documents stored in Solr and add them to a dictionary
         '''
-        all_docs = execute_query("*:*")
-
+        solr = solr_connection("gettingstarted")
+        all_docs = solr.search("*", **{'rows':'10000', 'sort': 'id asc'})
 
         '''
         Write results in trec_rel_file format
         
         For each query and each document, indicates if the document is relevant or not
-        '''    
-        for ref in rel_docs:		
-            for doc in all_docs:
+        '''
 
+        last_doc = 0
+
+        for doc in all_docs:
+            if int(doc['id']) > last_doc:
+                last_doc = int(doc['id'])
+
+        print(last_doc)
+
+        for ref in rel_docs:		
+            for id in range(1,last_doc):
                 #generate string
-                line = f'{ref} 0 {doc["id"]} '
-                if str(doc["id"]) in rel_docs[ref]:
+                line = f'{ref} 0 {id} '
+                
+                if str(id) in rel_docs[ref]:
                     line += "1"
                 else:
                     line += "0"
