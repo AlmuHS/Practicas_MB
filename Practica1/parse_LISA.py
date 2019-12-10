@@ -146,7 +146,7 @@ def execute_query(query):
     '''
 
     #execute query over the server, adding score field to the results, and sort them using score 
-    results = solr.search(query, **{'fl':'*,score', 'rows':'10000', 'sort': 'score desc'})
+    results = solr.search(query, **{'fl':'*,score', 'rows':'100000', 'sort': 'score desc'})
 
     #print results, separated by a blank line
     for doc in results:
@@ -168,12 +168,12 @@ def query_batch(filename, output_file):
     The list not only includes single words, and includes some complex expressions too
     This stop words will be removed of the query before send It to solr
     '''
-    stop_words = ["I AM DOING","I", "AM", "INTERESTED IN","ALSO INTERESTED",  "MORE INTERESTED", \
-                 "FOR INSTANCE", "INSTANCE", "RECEIVE INFORMATION", "I AM CURRENTLY ENGAGED"\
-                 "WOULD", "RECEIVE", "GRATEFUL", "BE PLEASED TO", "PLEASED", "WOULD BE PLEASED", "THERE HAS"\
-                  "INFORMATION ABOUT", "MY DISSERTATION IS", "GIVING", "ANY", "CONCERNS", "SUCH AS", \
+    stop_words = ["I AM DOING","I", "AM", "INTERESTED IN","ALSO INTERESTED",  "MORE INTERESTED", "MY", "AT", "TO" \
+                 "FOR INSTANCE", "INSTANCE", "RECEIVE INFORMATION", "I AM CURRENTLY ENGAGED", "WILL", "INCLUDE", "BE"\
+                 "WOULD", "RECEIVE", "GRATEFUL", "BE PLEASED TO", "PLEASED", "WOULD BE PLEASED", "THERE HAS", "THEIR"\
+                  "INFORMATION ABOUT", "MY DISSERTATION IS", "GIVING", "ANY", "CONCERNS", "SUCH AS", "WITH"\
                     "TO RECEIVE", "ALMOST", "ANYTHING", "TO DO WITH", "TO DO", "PROVISION", "E.G.", "CONCERNED", \
-                     "ETC", "AND", "OR", "THE", "BOTH", "ANY", "EITHER", "LIKE", "ITSELF", "I.E.", "OF", "FOR", "FROM", "IN"]
+                     "ETC", "AND", "OR", "THE", "BOTH", "ANY", "EITHER", "LIKE", "ITSELF", "I.E.", "OF","FOR", "FROM", "IN"]
                     
 
     #open query input file, and trec output file
@@ -271,7 +271,7 @@ def query_batch(filename, output_file):
             
             #write each result to output_file, using trec format
             for document in results:
-                #if document["score"] > 1:
+                #if document["score"] > 1.5:
                 output.write(f'{doc_counter} Q0 {document["id"]} {ranking} {document["score"]} almuhs \n')                
                 ranking += 1
 
