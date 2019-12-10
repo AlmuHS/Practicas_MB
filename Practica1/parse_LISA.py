@@ -326,16 +326,17 @@ def gen_trec_rel(in_file, out_file):
     
             #split the line in words
             fields = line.split()
-            
+            #num_docs = fields[1]
+
             #add documents of current query, excluding query ID
             if fields[0] == str(query_counter):
-                rel_docs[query_counter] += fields[1:len(fields)]
+                rel_docs[query_counter] += fields[2:len(fields)]
 
             #add documents of next query, excluding query ID
             elif fields[0] == str(query_counter+1):
                 query_counter += 1
                 rel_docs[query_counter] = []
-                rel_docs[query_counter] += fields[1:len(fields)]
+                rel_docs[query_counter] += fields[2:len(fields)]
 
             #add more documents of current query
             else:
@@ -359,10 +360,12 @@ def gen_trec_rel(in_file, out_file):
             if int(doc['id']) > last_doc:
                 last_doc = int(doc['id'])
 
+        #last_doc = all_docs.docs[len(all_docs)-1]["id"]
+
         print(last_doc)
 
         for ref in rel_docs:		
-            for id in range(1,last_doc):
+            for id in range(1,last_doc+1):
                 #generate string
                 line = f'{ref} 0 {id} '
                 
