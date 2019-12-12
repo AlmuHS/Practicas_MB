@@ -3,6 +3,9 @@ import re
 import pysolr
 import sys
 import string
+import nltk
+from nltk.corpus import stopwords
+
 
 '''
 This function set the connection to a solr local server
@@ -170,13 +173,20 @@ def query_batch(filename, output_file):
     The list not only includes single words, and includes some complex expressions too
     This stop words will be removed of the query before send It to solr
     '''
-    stop_words = ["DOING","I", "AM", "INTERESTED IN","ALSO INTERESTED", "TOPIC", "MORE INTERESTED", "MY", "AT", "TO","DO", "OF" \
+
+    nltk.download('stopwords')                
+    stop_words = list(stopwords.words('english'))
+    
+    stop_words += ["DOING","I", "AM", "INTERESTED IN","ALSO INTERESTED", "INTERESTED", "AVAILABLE", "TOPIC", "MORE INTERESTED", \
+                "MY", "AT", "TO","DO", "OF", "ON", "CURRENTLY" \
                  "FOR INSTANCE", "INSTANCE", "RECEIVE INFORMATION", "I AM CURRENTLY ENGAGED", "WILL", "INCLUDE", "BE", "SHOULD"\
                  "WOULD", "RECEIVE", "GRATEFUL", "BE PLEASED TO", "PLEASED", "WOULD BE PLEASED", "THERE HAS", "THEIR", "USING", "NOT", "JUST",\
-                  "INFORMATION ABOUT", "DISSERTATION IS", "GIVING", "ANY", "CONCERNS", "SUCH AS", "WITH", "DISSERTATION"\
+                  "INFORMATION ABOUT", "DISSERTATION IS", "DISSERTATION", "GIVING", "ANY", "CONCERNS", "SUCH AS", "WITH", "DISSERTATION"\
                     "TO RECEIVE", "ALMOST", "ANYTHING", "TO DO WITH", "TO DO", "PROVISION", "E.G.", "CONCERNED", "THIS", "INTEREST"\
                      "ETC.", "AND", "OR", "THE", "BOTH", "ANY", "EITHER", "LIKE", "ITSELF", "I.E.", "OF","FOR", "FROM", "WHETHER"]
-                    
+
+    stop_words = [word.upper() for word in stop_words]
+
 
     #open query input file, and trec output file
     with open(filename, 'r') as lisa_query, open(output_file, 'w') as output:
@@ -254,19 +264,29 @@ def query_batch(filename, output_file):
             query = query.translate(str.maketrans('', '', string.punctuation))
 
             #remove stop words of the query
+            query = query.split(" ")
+            filtered_query = ""
+
+            for word in query:
+                if word not in stop_words:
+                    filtered_query += f' {word}'
+            
+
+            '''
             for word in stop_words:
                 #query = query.replace(word + " ", "")
-                regex = f'\s?{word}\s'
+                regex = f'\s?{word.upper()}\s'
                 query = re.sub(regex, " ", query)
+            '''
             
             #print filtered query
-            print(query)
+            print(filtered_query)
 
             '''
             Send filtered query to solr, and write results to a file
             '''
             #send query to solr, searching coincidences in title or text
-            results = execute_query("title: " + query + "OR text:" + query)
+            results = execute_query("title: " + filtered_query + "OR text:" + filtered_query)
 
             #Increment the number of query sent
             doc_counter += 1
