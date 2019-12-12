@@ -1,5 +1,5 @@
 import re
-import write_xml as writer
+#import write_xml as writer
 import pysolr
 import sys
 import string
