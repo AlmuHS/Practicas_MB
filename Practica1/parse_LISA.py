@@ -146,12 +146,14 @@ def execute_query(query):
     '''
 
     #execute query over the server, adding score field to the results, and sort them using score 
-    results = solr.search(query, **{'fl':'*,score', 'rows':'100000', 'sort': 'score desc'})
+    results = solr.search(query, **{'fl':'*,score', 'rows':'100', 'sort': 'score desc'})
 
+    '''
     #print results, separated by a blank line
     for doc in results:
         print(doc)
         print("\n")
+    '''
 
     #return results in a dictionary
     return results
@@ -168,12 +170,12 @@ def query_batch(filename, output_file):
     The list not only includes single words, and includes some complex expressions too
     This stop words will be removed of the query before send It to solr
     '''
-    stop_words = ["I AM DOING","I", "AM", "INTERESTED IN","ALSO INTERESTED",  "MORE INTERESTED", "MY", "AT", "TO" \
-                 "FOR INSTANCE", "INSTANCE", "RECEIVE INFORMATION", "I AM CURRENTLY ENGAGED", "WILL", "INCLUDE", "BE"\
+    stop_words = ["DOING","I", "AM", "INTERESTED IN","ALSO INTERESTED", "TOPIC", "MORE INTERESTED", "MY", "AT", "TO","DO", "OF" \
+                 "FOR INSTANCE", "INSTANCE", "RECEIVE INFORMATION", "I AM CURRENTLY ENGAGED", "WILL", "INCLUDE", "BE", "SHOULD"\
                  "WOULD", "RECEIVE", "GRATEFUL", "BE PLEASED TO", "PLEASED", "WOULD BE PLEASED", "THERE HAS", "THEIR", "USING"\
-                  "INFORMATION ABOUT", "MY DISSERTATION IS", "GIVING", "ANY", "CONCERNS", "SUCH AS", "WITH", "DISSERTATION"\
+                  "INFORMATION ABOUT", "DISSERTATION IS", "GIVING", "ANY", "CONCERNS", "SUCH AS", "WITH", "DISSERTATION"\
                     "TO RECEIVE", "ALMOST", "ANYTHING", "TO DO WITH", "TO DO", "PROVISION", "E.G.", "CONCERNED", "THIS", "INTEREST"\
-                     "ETC.", "AND", "OR", "THE", "BOTH", "ANY", "EITHER", "LIKE", "ITSELF", "I.E.", "OF","FOR", "FROM", "IN", "WHETHER"]
+                     "ETC.", "AND", "OR", "THE", "BOTH", "ANY", "EITHER", "LIKE", "ITSELF", "I.E.", "OF","FOR", "FROM", "WHETHER"]
                     
 
     #open query input file, and trec output file
@@ -211,8 +213,9 @@ def query_batch(filename, output_file):
             '''
             #Get id and remove EOL 
             id = line.split(" ")[0].rstrip();
+            #next(lisa_query)
 
-            print(id)
+            print(id + "\n")
 
             '''
             This block get the content of the query. 
@@ -252,7 +255,9 @@ def query_batch(filename, output_file):
 
             #remove stop words of the query
             for word in stop_words:
-                query = query.replace(word + " ", "")
+                #query = query.replace(word + " ", "")
+                regex = f'\s?{word}\s'
+                query = re.sub(regex, " ", query)
             
             #print filtered query
             print(query)
