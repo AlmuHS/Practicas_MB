@@ -172,7 +172,7 @@ def query_batch(filename, output_file):
     '''
     stop_words = ["DOING","I", "AM", "INTERESTED IN","ALSO INTERESTED", "TOPIC", "MORE INTERESTED", "MY", "AT", "TO","DO", "OF" \
                  "FOR INSTANCE", "INSTANCE", "RECEIVE INFORMATION", "I AM CURRENTLY ENGAGED", "WILL", "INCLUDE", "BE", "SHOULD"\
-                 "WOULD", "RECEIVE", "GRATEFUL", "BE PLEASED TO", "PLEASED", "WOULD BE PLEASED", "THERE HAS", "THEIR", "USING"\
+                 "WOULD", "RECEIVE", "GRATEFUL", "BE PLEASED TO", "PLEASED", "WOULD BE PLEASED", "THERE HAS", "THEIR", "USING", "NOT", "JUST",\
                   "INFORMATION ABOUT", "DISSERTATION IS", "GIVING", "ANY", "CONCERNS", "SUCH AS", "WITH", "DISSERTATION"\
                     "TO RECEIVE", "ALMOST", "ANYTHING", "TO DO WITH", "TO DO", "PROVISION", "E.G.", "CONCERNED", "THIS", "INTEREST"\
                      "ETC.", "AND", "OR", "THE", "BOTH", "ANY", "EITHER", "LIKE", "ITSELF", "I.E.", "OF","FOR", "FROM", "WHETHER"]
@@ -229,7 +229,7 @@ def query_batch(filename, output_file):
             query = ""
 
             #read first line (to start the check)
-            query = lisa_query.readline()
+            line = lisa_query.readline()
             
             #read file line to line until find # character
             while(re.match("^.*\.*#$", line) == None):
