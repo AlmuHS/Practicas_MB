@@ -24,7 +24,7 @@ def upload_lisa(filename):
     items = dict();
 
     #the output file will have the same name than input file, adding .xml extension
-    output_file = str(filename) + ".xml"
+    #output_file = str(filename) + ".xml"
 
     #if output file exists, remove its content
     output = open(output_file, "w")
@@ -170,10 +170,10 @@ def query_batch(filename, output_file):
     '''
     stop_words = ["I AM DOING","I", "AM", "INTERESTED IN","ALSO INTERESTED",  "MORE INTERESTED", "MY", "AT", "TO" \
                  "FOR INSTANCE", "INSTANCE", "RECEIVE INFORMATION", "I AM CURRENTLY ENGAGED", "WILL", "INCLUDE", "BE"\
-                 "WOULD", "RECEIVE", "GRATEFUL", "BE PLEASED TO", "PLEASED", "WOULD BE PLEASED", "THERE HAS", "THEIR"\
-                  "INFORMATION ABOUT", "MY DISSERTATION IS", "GIVING", "ANY", "CONCERNS", "SUCH AS", "WITH"\
-                    "TO RECEIVE", "ALMOST", "ANYTHING", "TO DO WITH", "TO DO", "PROVISION", "E.G.", "CONCERNED", \
-                     "ETC", "AND", "OR", "THE", "BOTH", "ANY", "EITHER", "LIKE", "ITSELF", "I.E.", "OF","FOR", "FROM", "IN"]
+                 "WOULD", "RECEIVE", "GRATEFUL", "BE PLEASED TO", "PLEASED", "WOULD BE PLEASED", "THERE HAS", "THEIR", "USING"\
+                  "INFORMATION ABOUT", "MY DISSERTATION IS", "GIVING", "ANY", "CONCERNS", "SUCH AS", "WITH", "DISSERTATION"\
+                    "TO RECEIVE", "ALMOST", "ANYTHING", "TO DO WITH", "TO DO", "PROVISION", "E.G.", "CONCERNED", "THIS", "INTEREST"\
+                     "ETC.", "AND", "OR", "THE", "BOTH", "ANY", "EITHER", "LIKE", "ITSELF", "I.E.", "OF","FOR", "FROM", "IN", "WHETHER"]
                     
 
     #open query input file, and trec output file
@@ -271,7 +271,7 @@ def query_batch(filename, output_file):
             
             #write each result to output_file, using trec format
             for document in results:
-                #if document["score"] > 1.5:
+                #if document["score"] > 0.5:
                 output.write(f'{doc_counter} Q0 {document["id"]} {ranking} {document["score"]} almuhs \n')                
                 ranking += 1
 
