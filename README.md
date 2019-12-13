@@ -1,7 +1,7 @@
 # Practicas_MB
 Prácticas de motores de búsqueda
 
-## Práctica 1
+## Práctica 1_SR1
 
 ### Objetivo
 
