@@ -174,17 +174,20 @@ def query_batch(filename, output_file):
     This stop words will be removed of the query before send It to solr
     '''
 
+    #download stopwords list from nltk
     nltk.download('stopwords')                
     stop_words = list(stopwords.words('english'))
     
+    #add more stopwords
     stop_words += ["DOING","I", "AM", "INTERESTED IN","ALSO INTERESTED", "INTERESTED", "AVAILABLE", "TOPIC", "MORE INTERESTED", \
-                "MY", "AT", "TO","DO", "OF", "ON", "CURRENTLY" \
+                "MY", "AT", "TO","DO", "OF", "ON", "CURRENTLY", \
                  "FOR INSTANCE", "INSTANCE", "RECEIVE INFORMATION", "I AM CURRENTLY ENGAGED", "WILL", "INCLUDE", "BE", "SHOULD"\
                  "WOULD", "RECEIVE", "GRATEFUL", "BE PLEASED TO", "PLEASED", "WOULD BE PLEASED", "THERE HAS", "THEIR", "USING", "NOT", "JUST",\
                   "INFORMATION ABOUT", "DISSERTATION IS", "DISSERTATION", "GIVING", "ANY", "CONCERNS", "SUCH AS", "WITH", "DISSERTATION"\
                     "TO RECEIVE", "ALMOST", "ANYTHING", "TO DO WITH", "TO DO", "PROVISION", "E.G.", "CONCERNED", "THIS", "INTEREST"\
                      "ETC.", "AND", "OR", "THE", "BOTH", "ANY", "EITHER", "LIKE", "ITSELF", "I.E.", "OF","FOR", "FROM", "WHETHER"]
 
+    #convert all stopwords to upper
     stop_words = [word.upper() for word in stop_words]
 
 
@@ -201,92 +204,37 @@ def query_batch(filename, output_file):
         Each iteration parses a query document, send the filtered query to solr, and write the results to a file,
         in trec_top_file format
         '''
-        while True:
 
-            line = lisa_query.readline();
-    
-            '''
-            Python doesn't offers any function to find the EOF in a file.
-            When readline() reach EOF, It returns a empty string.
-            So, we use this strategy to break the infinite loop in EOF
-            '''
+        queries_list = lisa_query.read().split(' #')
 
-            #if line is EOF, finish the loop
-            if(not line.strip()):
-                break     
-        
 
-            '''
-            This line get the ID of each query document            
-            The ID field is a only word, in the first line of each document.
-            We get this using a split
-            '''
-            #Get id and remove EOL 
-            id = line.split(" ")[0].rstrip();
-            #next(lisa_query)
-
-            print(id + "\n")
-
-            '''
-            This block get the content of the query. 
-            Each query is in a couple of lines, followed by a # character.
-            To get the query, we read line to line until find a line which finish with #,
-             and concatenate each line in a only string, removing the EOL.
-            Finally, we add this latest line, removing # character from the line
-            '''
-
-            #initialize query variable as empty string
-            query = ""
-
-            #read first line (to start the check)
-            line = lisa_query.readline()
-            
-            #read file line to line until find # character
-            while(re.match("^.*\.*#$", line) == None):
-                #add line to query string
-                query += line
-
-                #read next line
-                line = lisa_query.readline()
-
-            #add last line to the query string, removing # character
-            query += line.replace(". #", "")
-
+        for query in queries_list:
             #remove all EOL of the query
-            query = query.replace("\n", " ")
-           
-            '''
-            Once get the query in natural language, we filter the query,
-             removing stop words and some useless characters
-            '''
+            query = query.replace("\n", " ")  
 
             #remove punctuation marks of the query
             query = query.translate(str.maketrans('', '', string.punctuation))
 
-            #remove stop words of the query
-            query = query.split(" ")
+            query_words = query.split(" ")
             filtered_query = ""
 
-            for word in query:
+            #print(query_words)
+
+            for word in query_words[2:]:
                 if word not in stop_words:
                     filtered_query += f' {word}'
-            
 
-            '''
-            for word in stop_words:
-                #query = query.replace(word + " ", "")
-                regex = f'\s?{word.upper()}\s'
-                query = re.sub(regex, " ", query)
-            '''
-            
-            #print filtered query
-            print(filtered_query)
+            filtered_query = filtered_query
+
+            print(filtered_query + "\n\n")
 
             '''
             Send filtered query to solr, and write results to a file
             '''
+
+            
             #send query to solr, searching coincidences in title or text
-            results = execute_query("title: " + filtered_query + "OR text:" + filtered_query)
+            results = execute_query("text:" + filtered_query)
 
             #Increment the number of query sent
             doc_counter += 1
@@ -299,7 +247,8 @@ def query_batch(filename, output_file):
                 #if document["score"] > 0.5:
                 output.write(f'{doc_counter} Q0 {document["id"]} {ranking} {document["score"]} almuhs \n')                
                 ranking += 1
-
+                        
+            
 
 '''
 This function parses the content of LISARJ.NUM file, and generate a file in trec_rel_format.
