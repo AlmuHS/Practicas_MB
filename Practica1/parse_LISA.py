@@ -202,10 +202,10 @@ def query_batch(filename, output_file):
         Each iteration parses a query document, send the filtered query to solr, and write the results to a file,
         in trec_top_file format
         '''
-
+        #read entire file and split in queries using # delimiter
         queries_list = lisa_query.read().split(' #')
 
-
+        #read list to process and send each query
         for doc_counter, query in enumerate(queries_list[0:-1]):
                 #remove all EOL of the query
                 query = query.rstrip()
@@ -213,18 +213,19 @@ def query_batch(filename, output_file):
                 #remove punctuation marks of the query
                 query = query.translate(str.maketrans('', '', string.punctuation))
 
+                #split the query in words
                 query_words = query.split()
                 filtered_query = ""
             
+                #print query ID
                 print(query_words[0] + "\t")
 
                 #print(query_words)
 
+                #create a new filtered_query removing stopwords
                 for word in query_words[2:]:
                     if word not in stop_words:
                         filtered_query += f'{word} '
-
-                filtered_query = filtered_query
 
                 print(filtered_query + "\n\n")
 
