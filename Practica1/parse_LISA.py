@@ -149,7 +149,7 @@ def execute_query(query):
     '''
 
     #execute query over the server, adding score field to the results, and sort them using score 
-    results = solr.search(query, **{'fl':'*,score', 'rows':'100', 'sort': 'score desc'})
+    results = solr.search(query, **{'fl':'*,score', 'rows':'50', 'sort': 'score desc'})
 
     '''
     #print results, separated by a blank line
@@ -177,19 +177,20 @@ def query_batch(filename, output_file):
     #download stopwords list from nltk
     nltk.download('stopwords')                
     stop_words = list(stopwords.words('english'))
-    
-    #add more stopwords
-    stop_words += ["DOING","I", "AM", "INTERESTED IN","ALSO INTERESTED", "INTERESTED", "AVAILABLE", "TOPIC", "MORE INTERESTED", \
-                "MY", "AT", "TO","DO", "OF", "ON", "CURRENTLY", "BOTH", "ALSO" \
-                 "FOR INSTANCE", "INSTANCE", "RECEIVE INFORMATION", "I AM CURRENTLY ENGAGED", "WILL", "INCLUDE", "BE", "SHOULD"\
-                 "WOULD", "RECEIVE", "GRATEFUL", "BE PLEASED TO", "PLEASED", "WOULD BE PLEASED", "THERE HAS", "THEIR", "USING", "NOT", "JUST",\
-                  "INFORMATION ABOUT", "DISSERTATION IS", "DISSERTATION", "GIVING", "ANY", "CONCERNS", "SUCH AS", "WITH", "DISSERTATION"\
-                    "TO RECEIVE", "ALMOST", "ANYTHING", "TO DO WITH", "TO DO", "PROVISION", "E.G.", "CONCERNED", "THIS", "INTEREST"\
-                     "ETC.", "AND", "OR", "THE", "BOTH", "ANY", "EITHER", "LIKE", "ITSELF", "I.E.", "OF","FOR", "FROM", "WHETHER"]
 
     #convert all stopwords to upper
-    stop_words = [word.upper() for word in stop_words]
+    stop_words = [word.upper() for word in stop_words]    
 
+    #add more stopwords
+    stop_words += ["DOING","I", "AM", "INTERESTED IN","ALSO INTERESTED", "INTERESTED", "AVAILABLE", "TOPIC", "MORE INTERESTED", "INFORMATION", \
+                "MY", "AT", "TO","DO", "OF", "ON", "CURRENTLY", "BOTH", "ALSO", "PAPERS", "PAPER", "DESCRIBING","TYPE", "ESPECIALLY", "LOOKING", "MAY",\
+                 "FOR INSTANCE", "INSTANCE", "RECEIVE INFORMATION", "I AM CURRENTLY ENGAGED", "WILL", "INCLUDE", "BE", "SHOULD", "INTEND", "SEND",\
+                 "WOULD", "RECEIVE", "GRATEFUL", "BE PLEASED TO", "PLEASED", "WOULD BE PLEASED", "THERE HAS", "THEIR", "USING", "NOT", "JUST",\
+                  "INFORMATION ABOUT", "DISSERTATION IS", "DISSERTATION", "GIVING", "ANY", "CONCERNS", "SUCH AS", "WITH", "DISSERTATION", "DONE",\
+                    "TO RECEIVE", "ALMOST", "ANYTHING", "TO DO WITH", "TO DO", "PROVISION", "E.G.", "CONCERNED", "THIS", "INTEREST", "COULD",\
+                    "ELSEWHERE","ETC.", "ETC", "AND", "OR", "THE", "BOTH", "ANY", "EITHER", "LIKE", "ITSELF", "I.E.", "INCLUDING", "RESULTS",\
+                     "IE","FOR", "FROM", "WHETHER", "EG", "REFERS", "STUDYING", "PARTICULARLY", "VARIOUS", "TYPES", "RELATED", "INVOLVES", \
+                     "STUDIES", "PURPOSES", "PURPOSE"]
 
     #open query input file, and trec output file
     with open(filename, 'r') as lisa_query, open(output_file, 'w') as output:
@@ -210,19 +211,21 @@ def query_batch(filename, output_file):
 
         for query in queries_list[0:-1]:
                 #remove all EOL of the query
-                query = query.replace("\n", " ")  
+                query = query.rstrip()
 
                 #remove punctuation marks of the query
                 query = query.translate(str.maketrans('', '', string.punctuation))
 
-                query_words = query.split(" ")
+                query_words = query.split()
                 filtered_query = ""
+            
+                print(query_words[0] + "\t")
 
                 #print(query_words)
 
                 for word in query_words[2:]:
                     if word not in stop_words:
-                        filtered_query += f' {word}'
+                        filtered_query += f'{word} '
 
                 filtered_query = filtered_query
 
