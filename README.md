@@ -12,6 +12,8 @@ El objetivo de esta práctica es indexar una colección de documentos (LISA) en 
 - Apache Solr
 - Python 3
 	+ pysolr
+	+ nltk
+	+ string
 - trec_eval
 	
 ### Instalación
@@ -20,7 +22,7 @@ El objetivo de esta práctica es indexar una colección de documentos (LISA) en 
 	- En Ubuntu
 
 			sudo apt install git python3-pip
-			pip3 install pysolr
+			pip3 install -r Practica1/requirements.txt
 		
 - **Descarga de la aplicación**
 		
