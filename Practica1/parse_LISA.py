@@ -180,7 +180,7 @@ def query_batch(filename, output_file):
     
     #add more stopwords
     stop_words += ["DOING","I", "AM", "INTERESTED IN","ALSO INTERESTED", "INTERESTED", "AVAILABLE", "TOPIC", "MORE INTERESTED", \
-                "MY", "AT", "TO","DO", "OF", "ON", "CURRENTLY", \
+                "MY", "AT", "TO","DO", "OF", "ON", "CURRENTLY", "BOTH", "ALSO" \
                  "FOR INSTANCE", "INSTANCE", "RECEIVE INFORMATION", "I AM CURRENTLY ENGAGED", "WILL", "INCLUDE", "BE", "SHOULD"\
                  "WOULD", "RECEIVE", "GRATEFUL", "BE PLEASED TO", "PLEASED", "WOULD BE PLEASED", "THERE HAS", "THEIR", "USING", "NOT", "JUST",\
                   "INFORMATION ABOUT", "DISSERTATION IS", "DISSERTATION", "GIVING", "ANY", "CONCERNS", "SUCH AS", "WITH", "DISSERTATION"\
@@ -208,45 +208,45 @@ def query_batch(filename, output_file):
         queries_list = lisa_query.read().split(' #')
 
 
-        for query in queries_list:
-            #remove all EOL of the query
-            query = query.replace("\n", " ")  
+        for query in queries_list[0:-1]:
+                #remove all EOL of the query
+                query = query.replace("\n", " ")  
 
-            #remove punctuation marks of the query
-            query = query.translate(str.maketrans('', '', string.punctuation))
+                #remove punctuation marks of the query
+                query = query.translate(str.maketrans('', '', string.punctuation))
 
-            query_words = query.split(" ")
-            filtered_query = ""
+                query_words = query.split(" ")
+                filtered_query = ""
 
-            #print(query_words)
+                #print(query_words)
 
-            for word in query_words[2:]:
-                if word not in stop_words:
-                    filtered_query += f' {word}'
+                for word in query_words[2:]:
+                    if word not in stop_words:
+                        filtered_query += f' {word}'
 
-            filtered_query = filtered_query
+                filtered_query = filtered_query
 
-            print(filtered_query + "\n\n")
+                print(filtered_query + "\n\n")
 
-            '''
-            Send filtered query to solr, and write results to a file
-            '''
+                '''
+                Send filtered query to solr, and write results to a file
+                '''
 
-            
-            #send query to solr, searching coincidences in title or text
-            results = execute_query("text:" + filtered_query)
+                
+                #send query to solr, searching coincidences in title or text
+                results = execute_query("text:" + filtered_query)
 
-            #Increment the number of query sent
-            doc_counter += 1
-            
-            #initialize ranking variable, to sort the results using its score
-            ranking = 1
-            
-            #write each result to output_file, using trec format
-            for document in results:
-                #if document["score"] > 0.5:
-                output.write(f'{doc_counter} Q0 {document["id"]} {ranking} {document["score"]} almuhs \n')                
-                ranking += 1
+                #Increment the number of query sent
+                doc_counter += 1
+                
+                #initialize ranking variable, to sort the results using its score
+                ranking = 1
+                
+                #write each result to output_file, using trec format
+                for document in results:
+                    #if document["score"] > 0.5:
+                    output.write(f'{doc_counter} Q0 {document["id"]} {ranking} {document["score"]} almuhs \n')                
+                    ranking += 1
                         
             
 
