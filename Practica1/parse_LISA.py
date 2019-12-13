@@ -194,9 +194,6 @@ def query_batch(filename, output_file):
 
     #open query input file, and trec output file
     with open(filename, 'r') as lisa_query, open(output_file, 'w') as output:
-
-        #counter of documents which will be sent as query 
-        doc_counter = 0
         
         '''
         This loop parses the query file, filtering the most important keywords of each query document,
@@ -209,7 +206,7 @@ def query_batch(filename, output_file):
         queries_list = lisa_query.read().split(' #')
 
 
-        for query in queries_list[0:-1]:
+        for doc_counter, query in enumerate(queries_list[0:-1]):
                 #remove all EOL of the query
                 query = query.rstrip()
 
@@ -234,22 +231,13 @@ def query_batch(filename, output_file):
                 '''
                 Send filtered query to solr, and write results to a file
                 '''
-
-                
                 #send query to solr, searching coincidences in title or text
-                results = execute_query("text:" + filtered_query)
-
-                #Increment the number of query sent
-                doc_counter += 1
-                
-                #initialize ranking variable, to sort the results using its score
-                ranking = 1
+                results = execute_query("text:" + filtered_query) 
                 
                 #write each result to output_file, using trec format
-                for document in results:
+                for ranking,document in enumerate(results):
                     #if document["score"] > 0.5:
-                    output.write(f'{doc_counter} Q0 {document["id"]} {ranking} {document["score"]} almuhs \n')                
-                    ranking += 1
+                    output.write(f'{doc_counter+1} Q0 {document["id"]} {ranking+1} {document["score"]} almuhs \n')                
                         
             
 
