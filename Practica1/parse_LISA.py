@@ -232,7 +232,7 @@ def query_batch(filename, output_file):
                 '''
                 Send filtered query to solr, and write results to a file
                 '''
-                #send query to solr, searching coincidences in title or text
+                #send query to solr, searching coincidences in text
                 results = execute_query("text:" + filtered_query) 
                 
                 #write each result to output_file, using trec format
